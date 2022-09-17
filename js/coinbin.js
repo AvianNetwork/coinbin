@@ -650,9 +650,9 @@ $(document).ready(function() {
 
 			if(!$(o).hasClass("has-error")){
 				var seq = 0xffffffff-1;
-				if($("#txRBF").is(":checked")){
-					seq = 0xffffffff-2;
-				}
+				// if($("#txRBF").is(":checked")){
+				// 	seq = 0xffffffff-2;
+				// }
 
 				var currentScript = $(".txIdScript",o).val();
 				if (currentScript.match(/^76a914[0-9a-f]{40}88ac$/)) {
@@ -1115,13 +1115,11 @@ $(document).ready(function() {
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.result){
 						var o = data.result[i];
-						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
-						if(tx.match(/^[a-f0-9]+$/)){
-							var n = o.index;
-							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
-							var amount = (o.value / 100000000);
-							addOutput(tx, n, script, amount);
-						}
+						var tx = o.txid;
+						var n = o.index;
+						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
+						var amount = (o.value / 100000000);
+						addOutput(tx, n, script, amount);
 					}
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');

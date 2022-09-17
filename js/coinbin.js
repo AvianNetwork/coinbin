@@ -1119,7 +1119,7 @@ $(document).ready(function() {
 						if(tx.match(/^[a-f0-9]+$/)){
 							var n = o.index;
 							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
-							var amount = o.value;
+							var amount = (o.value / 100000000);
 							addOutput(tx, n, script, amount);
 						}
 					}
@@ -1176,7 +1176,6 @@ $(document).ready(function() {
 	function totalFee(){
 		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(8);
 		$("#transactionFee").val((fee>0)?fee:'0.00');
-		$("#transactionFee").val('0.001');
 	}
 
 	$(".optionsCollapse").click(function(){
@@ -1545,7 +1544,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val()+64);
+				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();

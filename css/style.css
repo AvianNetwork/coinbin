@@ -137,9 +137,9 @@ i {
 	background: #FAFE92;
 }
 
-#fees .txinputs {}
+/* #fees .txinputs {}
 
-#fees .txoutputs {}
+#fees .txoutputs {} */
 
 .hideOverflow {
 	overflow: hidden;

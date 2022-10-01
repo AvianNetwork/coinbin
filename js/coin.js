@@ -21,8 +21,8 @@
 	/* other vars */
 	coinjs.developer = '33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G'; // Bitcoin
 
-	/* bit(coinb.in) api vars */
-	coinjs.hostname	= ((document.location.hostname.split(".")[(document.location.hostname.split(".")).length-1]) == 'onion') ? 'coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion' : 'api.avn.network';
+	/* avian api vars */
+	coinjs.hostname	= 'api.avn.network'
 	coinjs.host = ('https:'==document.location.protocol?'https://':'https://')+coinjs.hostname;
 
 	/* start of address functions */

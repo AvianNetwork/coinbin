@@ -884,9 +884,9 @@ $(document).ready(function() {
 
 	$("#redeemFromBtn").click(function(){
 		var redeem = redeemingFrom($("#redeemFrom").val());	
-
+		
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
-
+		
 		if(redeem.from=='multisigAddress'){
 			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> You should use the redeem script, not its address!');
 			return false;
@@ -902,11 +902,15 @@ $(document).ready(function() {
 		}
 
 		$("#redeemFromBtn").html("Please wait, loading...").attr('disabled',true);
-
+		
 		var host = $(this).attr('rel');
 
 		// Avian (api.avn.network)
-		listUnspentAvianAPI(redeem, "AVN");
+		if(host=='api.avn.network') {
+			listUnspentAvianAPI(redeem, false);
+		} else if(host=='api-testnet.avn.network') {
+			listUnspentAvianAPI(redeem, true);
+		}
 
 		if($("#redeemFromStatus").hasClass("hidden")) {
 			// An ethical dilemma: Should we automatically set nLockTime?
@@ -1102,10 +1106,15 @@ $(document).ready(function() {
 	}
 
 	/* retrieve unspent data from avian api */
-	function listUnspentAvianAPI(redeem, network){
+	function listUnspentAvianAPI(redeem, isTestnet){
+		var apiUrl;
+
+		if(!isTestnet) apiUrl = "https://api.avn.network/unspent/"+redeem.addr;
+		else apiUrl = "https://api-testnet.avn.network/unspent/"+redeem.addr;
+
 		$.ajax ({
 			type: "GET",
-			url: "https://api.avn.network/unspent/"+redeem.addr,
+			url: apiUrl,
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
@@ -1122,6 +1131,7 @@ $(document).ready(function() {
 						addOutput(tx, n, script, amount);
 					}
 				} else {
+					console.log("look", data)
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
 				}
 			},
@@ -1189,42 +1199,20 @@ $(document).ready(function() {
 	/* broadcast a transaction */
 
 	$("#rawSubmitBtn").click(function(){
-		rawSubmitAvianAPI(this, "AVN");
+		rawSubmitAvianAPI(this, false);
 	});
 
-	// broadcast transaction via coinbin (default)
-	function rawSubmitDefault(btn){ 
-		var thisbtn = btn;		
-		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-		$.ajax ({
-			type: "POST",
-			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=sendrawtransaction',
-			data: {'rawtx':$("#rawTransaction").val()},
-			dataType: "xml",
-			error: function(data) {
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-			},
-                        success: function(data) {
-				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
-				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://coinb.in/tx/' + $(data).find("txid").text() + '" target="_blank">View on Blockchain</a>');
-				} else {
-					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
-				}
-			},
-			complete: function(data, status) {
-				$("#rawTransactionStatus").fadeOut().fadeIn();
-				$(thisbtn).val('Submit').attr('disabled',false);				
-			}
-		});
-	}
-
 	// broadcast transaction via avian api (mainnet)
-	function rawSubmitAvianAPI(thisbtn, network){ 
+	function rawSubmitAvianAPI(thisbtn, isTestnet){ 
+		var apiUrl;
+
+		if(!isTestnet) apiUrl = "https://api.avn.network/broadcast";
+		else apiUrl = "https://api-testnet.avn.network/broadcast";
+
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: "https://api.avn.network/broadcast",
+			url: apiUrl,
 			data: {"raw":$("#rawTransaction").val()},
 			dataType: "json",
 			error: function(data) {
@@ -1703,12 +1691,8 @@ $(document).ready(function() {
 			configureBroadcast();
 			configureGetUnspentTx();
 
-            if (coinjs.pub == 0x30){   // LTC
-                explorer_addr = "https://chain.so/address/LTC/";
-                coinjs.bech32.hrp = "ltc";
-            }
-            else if (coinjs.pub == 0x1e){   // DOGE
-                explorer_addr = "https://chain.so/address/DOGE/";
+            if (coinjs.pub == 0x6f){   // Testnet
+                explorer_addr = "https://testnet.avn.network/address/";
             }
 
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
@@ -1759,8 +1743,12 @@ $(document).ready(function() {
 
 		// Avian (api.avn.network)
 		$("#rawSubmitBtn").unbind("");
-		$("#rawSubmitBtn").click(function(){
-			rawSubmitAvianAPI(this, "AVN");
+		$("#rawSubmitBtn").click(function() {
+			if(host=="api.avn.network") {
+				rawSubmitAvianAPI(this, false);
+			} else if(host="api-testnet.avn.network") {
+				rawSubmitAvianAPI(this, true);	
+			}
 		});
 	}
 

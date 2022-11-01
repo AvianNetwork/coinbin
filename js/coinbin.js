@@ -910,6 +910,8 @@ $(document).ready(function() {
 			listUnspentAvianAPI(redeem, false);
 		} else if(host=='api-testnet.avn.network') {
 			listUnspentAvianAPI(redeem, true);
+		} else {
+			listUnspentAvianAPI(redeem, false);
 		}
 
 		if($("#redeemFromStatus").hasClass("hidden")) {
@@ -1748,6 +1750,8 @@ $(document).ready(function() {
 				rawSubmitAvianAPI(this, false);
 			} else if(host="api-testnet.avn.network") {
 				rawSubmitAvianAPI(this, true);	
+			} else {
+				rawSubmitAvianAPI(this, false);
 			}
 		});
 	}

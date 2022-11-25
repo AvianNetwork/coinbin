@@ -1110,9 +1110,11 @@ $(document).ready(function() {
 	/* retrieve unspent data from avian api */
 	function listUnspentAvianAPI(redeem, isTestnet){
 		var apiUrl;
+   
+		var nMaxInputs =  $("#nMaxInputs").val();	
 
-		if(!isTestnet) apiUrl = "https://api.avn.network/unspent/"+redeem.addr;
-		else apiUrl = "https://api-testnet.avn.network/unspent/"+redeem.addr;
+		if(!isTestnet) apiUrl = "https://api.avn.network/unspent/"+redeem.addr+'?maxInputs='+nMaxInputs;
+		else apiUrl = "https://api-testnet.avn.network/unspent/"+redeem.addr+'?maxInputs='+nMaxInputs;
 
 		$.ajax ({
 			type: "GET",
@@ -1537,7 +1539,7 @@ $(document).ready(function() {
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
 			} catch(e) {
-				// console.log(e);
+			    console.log(e);
 			}
 		} else {
 			$("#signedDataError").removeClass('hidden');

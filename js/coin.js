@@ -1062,7 +1062,7 @@
 
 		/* list unspent transactions */
 		r.listUnspent = function(address, callback) {
-			coinjs.ajax(coinjs.host+'/unspent/'+address+'?amount=1', callback, "GET");
+			coinjs.ajax(coinjs.host+'/unspent/'+address+'?maxAmount=25000121718', callback, "GET");
 		}
 
 		/* list transaction data */

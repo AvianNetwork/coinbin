@@ -319,7 +319,7 @@
 
 	/* retreive the balance from a given address */
 	coinjs.addressBalance = function(address, callback){
-		coinjs.ajax(coinjs.host+'/balance/='address, callback, "GET");
+		coinjs.ajax(coinjs.host+'/balance/='+address, callback, "GET");
 	}
 
 	/* decompress an compressed public key */
